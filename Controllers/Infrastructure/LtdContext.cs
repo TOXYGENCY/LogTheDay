@@ -1,4 +1,4 @@
-﻿namespace LogTheDay_WebAPI.Controllers.Infrastructure
+﻿namespace LogTheDay.Controllers.Infrastructure
 {
     public class LtdContext
     {

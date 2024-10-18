@@ -1,5 +1,6 @@
-﻿using LogTheDay_WebAPI.Controllers.Domain.Interfaces;
-using LogTheDay_WebAPI.Controllers.Infrastructure;
+﻿using LogTheDay.Controllers.Domain.Interfaces;
+using LogTheDay.Controllers.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

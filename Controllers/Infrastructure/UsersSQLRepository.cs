@@ -1,11 +1,11 @@
-﻿using LogTheDay_WebAPI.Controllers.Domain.Entities;
-using LogTheDay_WebAPI.Controllers.Domain.Interfaces;
+﻿using LogTheDay.Controllers.Domain.Entities;
+using LogTheDay.Controllers.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using Npgsql;
 using System.Xml.Linq;
 
-namespace LogTheDay_WebAPI.Controllers.Infrastructure
+namespace LogTheDay.Controllers.Infrastructure
 {
     public class UsersSQLRepository : IUsersRepository
     {

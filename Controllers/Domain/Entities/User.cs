@@ -1,4 +1,4 @@
-﻿namespace LogTheDay_WebAPI.Controllers.Domain.Entities
+﻿namespace LogTheDay.Controllers.Domain.Entities
 {
     public class User // dummy-class for users
     {

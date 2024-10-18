@@ -1,6 +1,6 @@
-﻿using LogTheDay_WebAPI.Controllers.Domain.Entities;
+﻿using LogTheDay.Controllers.Domain.Entities;
 
-namespace LogTheDay_WebAPI.Controllers.Domain.Interfaces
+namespace LogTheDay.Controllers.Domain.Interfaces
 {
     public interface IUsersRepository
     {

@@ -1,10 +1,10 @@
-﻿using LogTheDay_WebAPI.Controllers.Domain.Entities;
-using LogTheDay_WebAPI.Controllers.Domain.Interfaces;
+﻿using LogTheDay.Controllers.Domain.Interfaces;
+using LogTheDay.Controllers.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace LogTheDay_WebAPI.Controllers
+namespace LogTheDay.Controllers
 {
     [Route("api/v1/users-crud")]
     [ApiController]
