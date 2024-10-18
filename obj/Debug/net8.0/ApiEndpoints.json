@@ -8,5 +8,69 @@
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LogTheDay.Controllers.UsersCRUDController",
+    "Method": "AddUser",
+    "RelativePath": "api/v1/users-crud",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "LogTheDay.Controllers.Domain.Entities.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LogTheDay.Controllers.UsersCRUDController",
+    "Method": "UpdateUser",
+    "RelativePath": "api/v1/users-crud",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "LogTheDay.Controllers.Domain.Entities.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LogTheDay.Controllers.UsersCRUDController",
+    "Method": "GetUserById",
+    "RelativePath": "api/v1/users-crud/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LogTheDay.Controllers.UsersCRUDController",
+    "Method": "DeleteUser",
+    "RelativePath": "api/v1/users-crud/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]
