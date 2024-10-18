@@ -53,3 +53,25 @@ Mkfile.old
 dkms.conf
 
 /.vs
+/bin/Debug/net8.0/LogTheDay_WebAPI.deps.json
+/bin/Debug/net8.0/LogTheDay_WebAPI.runtimeconfig.json
+/obj/Debug/net8.0/staticwebassets/msbuild.build.LogTheDay_WebAPI.props
+/obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.LogTheDay_WebAPI.props
+/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.LogTheDay_WebAPI.props
+/obj/Debug/net8.0/LogTheDay_WebAPI.AssemblyInfo.cs
+/obj/Debug/net8.0/LogTheDay_WebAPI.AssemblyInfoInputs.cache
+/obj/Debug/net8.0/LogTheDay_WebAPI.assets.cache
+/obj/Debug/net8.0/LogTheDay_WebAPI.csproj.AssemblyReference.cache
+/obj/Debug/net8.0/LogTheDay_WebAPI.csproj.BuildWithSkipAnalyzers
+/obj/Debug/net8.0/LogTheDay_WebAPI.csproj.CoreCompileInputs.cache
+/obj/Debug/net8.0/LogTheDay_WebAPI.csproj.FileListAbsolute.txt
+/obj/Debug/net8.0/LogTheDay_WebAPI.GeneratedMSBuildEditorConfig.editorconfig
+/obj/Debug/net8.0/LogTheDay_WebAPI.genruntimeconfig.cache
+/obj/Debug/net8.0/LogTheDay_WebAPI.GlobalUsings.g.cs
+/obj/Debug/net8.0/LogTheDay_WebAPI.MvcApplicationPartsAssemblyInfo.cache
+/obj/Debug/net8.0/LogTheDay_WebAPI.MvcApplicationPartsAssemblyInfo.cs
+/obj/LogTheDay_WebAPI.csproj.nuget.dgspec.json
+/obj/LogTheDay_WebAPI.csproj.nuget.g.props
+/obj/LogTheDay_WebAPI.csproj.nuget.g.targets
+/LogTheDay_WebAPI.http
+/LogTheDay_WebAPI.sln

@@ -4,30 +4,9 @@
 -- Dumped by pg_dump version 17rc1
 
 CREATE DATABASE "LogTheDay" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Russian_Russia.1251';
-
-
 \connect "LogTheDay"
 
--- SET statement_timeout = 0;
--- SET lock_timeout = 0;
--- SET idle_in_transaction_session_timeout = 0;
--- SET transaction_timeout = 0;
--- SET client_encoding = 'UTF8';
--- SET standard_conforming_strings = on;
--- SELECT pg_catalog.set_config('search_path', '', false);
--- SET check_function_bodies = false;
--- SET xmloption = content;
--- SET client_min_messages = warning;
--- SET row_security = off;
-
--- CREATE SCHEMA public;
--- COMMENT ON SCHEMA public IS 'standard public schema';
-
--- SET default_tablespace = '';
--- SET default_table_access_method = heap;
-
-
-CREATE TABLE public."user" (
+CREATE TABLE public.users (
     id uuid NOT NULL,
     name character varying(25) NOT NULL,
     email character varying NOT NULL,
@@ -43,7 +22,7 @@ CREATE TABLE public.pages (
     privacy_type integer DEFAULT 0 NOT NULL,
     custom_css character varying,
     CONSTRAINT pages_id_pk PRIMARY KEY (id),
-    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE RESTRICT ON DELETE RESTRICT
+    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE RESTRICT ON DELETE RESTRICT
 );
 
 CREATE TABLE public.notes (
@@ -70,13 +49,6 @@ CREATE TABLE public.attachments (
     CONSTRAINT attachments_id_pk PRIMARY KEY (id),
     CONSTRAINT note_id_fk FOREIGN KEY (note_id) REFERENCES public.notes(id) ON UPDATE RESTRICT ON DELETE RESTRICT
 );
-
--- CREATE TABLE public.user_content (
---     user_id uuid NOT NULL,
---     pages_id uuid,
---     CONSTRAINT user_content_id_pk PRIMARY KEY (user_id),
---     CONSTRAINT pages_id_unique UNIQUE (pages_id)
--- );
 
 CREATE INDEX fki_note_id ON public.attachments USING btree (note_id);
 CREATE INDEX fki_user_content_pages_id ON public.pages USING btree (id);

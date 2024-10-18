@@ -1,0 +1,12 @@
+[
+  {
+    "ContainingType": "LogTheDay_WebAPI.Controllers.UsersCRUDController",
+    "Method": "GetAll",
+    "RelativePath": "api/v1/users-crud",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]
