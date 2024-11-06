@@ -3,6 +3,7 @@ using LogTheDay.Controllers.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
 
 namespace LogTheDay.Controllers
 {

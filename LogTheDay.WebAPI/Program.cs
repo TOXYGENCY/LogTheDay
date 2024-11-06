@@ -1,5 +1,7 @@
 ﻿using LogTheDay.Controllers.Domain.Interfaces;
 using LogTheDay.Controllers.Infrastructure;
+using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
+using LogTheDay.LogTheDay.WebAPI.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,8 +1,8 @@
-﻿using LogTheDay.Controllers.Domain.Interfaces;
-using LogTheDay.Controllers.Domain.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 
 namespace LogTheDay.Controllers
 {

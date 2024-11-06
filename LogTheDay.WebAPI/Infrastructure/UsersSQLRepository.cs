@@ -1,5 +1,6 @@
 ﻿using LogTheDay.Controllers.Domain.Entities;
 using LogTheDay.Controllers.Domain.Interfaces;
+using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -40,7 +41,7 @@ namespace LogTheDay.Controllers.Infrastructure
                             Name = reader.GetString(reader.GetOrdinal("name")),
                             Email = reader.GetString(reader.GetOrdinal("email")),
                             PasswordHash = reader.GetString(reader.GetOrdinal("password_hash")),
-                            RegistrationDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("reg_date"))) // Предположим, что это DateTime
+                            RegDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("reg_date"))) // Предположим, что это DateTime
                         });
                     }
                 }
@@ -67,7 +68,7 @@ namespace LogTheDay.Controllers.Infrastructure
                             Name = reader.GetString(reader.GetOrdinal("name")),
                             Email = reader.GetString(reader.GetOrdinal("email")),
                             PasswordHash = reader.GetString(reader.GetOrdinal("password_hash")),
-                            RegistrationDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("reg_date")))
+                            RegDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("reg_date")))
                         };
                     }
                 }
@@ -93,7 +94,7 @@ namespace LogTheDay.Controllers.Infrastructure
                             Name = reader.GetString(reader.GetOrdinal("name")),
                             Email = reader.GetString(reader.GetOrdinal("email")),
                             PasswordHash = reader.GetString(reader.GetOrdinal("password_hash")),
-                            RegistrationDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("reg_date")))
+                            RegDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("reg_date")))
                         });
                     }
                 }
@@ -141,7 +142,7 @@ namespace LogTheDay.Controllers.Infrastructure
             {
                 // не защищено от SQL-инъекций
                 using (var command = new NpgsqlCommand(
-                    $"UPDATE public.users SET name = '{user.Name}', email = '{user.Email}', password_hash = '{user.PasswordHash}', reg_date = '{user.RegistrationDate}' WHERE id = '{user.Id}';", connection))
+                    $"UPDATE public.users SET name = '{user.Name}', email = '{user.Email}', password_hash = '{user.PasswordHash}', reg_date = '{user.RegDate}' WHERE id = '{user.Id}';", connection))
                 {
                     connection.Open();
                     await command.ExecuteNonQueryAsync();

@@ -19,7 +19,7 @@
     "Parameters": [
       {
         "Name": "page",
-        "Type": "LogTheDay.Controllers.Domain.Entities.Page",
+        "Type": "LogTheDay.LogTheDay.WebAPI.Domain.Entities.Page",
         "IsRequired": true
       }
     ],
@@ -35,7 +35,7 @@
     "Parameters": [
       {
         "Name": "page",
-        "Type": "LogTheDay.Controllers.Domain.Entities.Page",
+        "Type": "LogTheDay.LogTheDay.WebAPI.Domain.Entities.Page",
         "IsRequired": true
       }
     ],
@@ -93,7 +93,7 @@
     "Parameters": [
       {
         "Name": "user",
-        "Type": "LogTheDay.Controllers.Domain.Entities.User",
+        "Type": "LogTheDay.LogTheDay.WebAPI.Domain.Entities.User",
         "IsRequired": true
       }
     ],
@@ -109,7 +109,7 @@
     "Parameters": [
       {
         "Name": "user",
-        "Type": "LogTheDay.Controllers.Domain.Entities.User",
+        "Type": "LogTheDay.LogTheDay.WebAPI.Domain.Entities.User",
         "IsRequired": true
       }
     ],

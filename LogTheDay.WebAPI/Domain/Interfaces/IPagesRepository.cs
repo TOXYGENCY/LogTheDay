@@ -1,7 +1,9 @@
-﻿using LogTheDay.Controllers.Domain.Entities;
+﻿using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
 
-namespace LogTheDay.Controllers.Domain.Interfaces
+namespace LogTheDay.LogTheDay.WebAPI.Domain.Interfaces
 {
+    // Базовые действия над пользователями в отношении базы данных
+
     public interface IPagesRepository
     {
         Task AddPage(Page page);

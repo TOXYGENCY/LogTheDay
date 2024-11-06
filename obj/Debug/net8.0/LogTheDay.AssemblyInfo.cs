@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("dot")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("LogTheDay")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+72609eecdc7874fc6b5f6ba1ae6b435206821edc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+02b6e789bb7da1be5984dfdfc429c6e0b47b3eae")]
 [assembly: System.Reflection.AssemblyProductAttribute("LogTheDay")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LogTheDay")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

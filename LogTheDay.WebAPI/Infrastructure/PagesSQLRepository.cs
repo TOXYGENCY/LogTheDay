@@ -1,5 +1,5 @@
-﻿using LogTheDay.Controllers.Domain.Entities;
-using LogTheDay.Controllers.Domain.Interfaces;
+﻿using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -8,7 +8,7 @@ using Npgsql;
 using System.Data;
 using System.Xml.Linq;
 
-namespace LogTheDay.Controllers.Infrastructure
+namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
 {
     // Реализация взаимодействия с базой, которая используется из PagesCRUDController
     public class PagesSQLRepository : IPagesRepository
@@ -34,7 +34,7 @@ namespace LogTheDay.Controllers.Infrastructure
                         result = new Page
                         {
                             Id = reader.GetGuid(reader.GetOrdinal("id")),
-                            OwnerId = reader.GetGuid(reader.GetOrdinal("user_id")),
+                            UserId = reader.GetGuid(reader.GetOrdinal("user_id")),
                             PageType = reader.GetString(reader.GetOrdinal("page_type")),
                             PrivacyType = reader.GetInt16(reader.GetOrdinal("privacy_type")), // поменять на менее требовательный, если получится
                             CustomCss = reader.GetString(reader.GetOrdinal("custom_css"))
@@ -60,7 +60,7 @@ namespace LogTheDay.Controllers.Infrastructure
                         result.Add(new Page
                         {
                             Id = reader.GetGuid(reader.GetOrdinal("id")),
-                            OwnerId = reader.GetGuid(reader.GetOrdinal("user_id")),
+                            UserId = reader.GetGuid(reader.GetOrdinal("user_id")),
                             PageType = reader.GetString(reader.GetOrdinal("page_type")),
                             PrivacyType = reader.GetInt16(reader.GetOrdinal("privacy_type")), // поменять на менее требовательный, если получится
                             CustomCss = reader.GetString(reader.GetOrdinal("custom_css"))
@@ -96,7 +96,7 @@ namespace LogTheDay.Controllers.Infrastructure
             {
                 // не защищено от SQL-инъекций
                 using (var command = new NpgsqlCommand(
-                    $"INSERT INTO public.pages (id, user_id, privacy_type, custom_css) VALUES ('{Guid.NewGuid()}', '{page.OwnerId}', '{page.PrivacyType}', '{page.CustomCss}');", connection)) 
+                    $"INSERT INTO public.pages (id, user_id, privacy_type, custom_css) VALUES ('{Guid.NewGuid()}', '{page.UserId}', '{page.PrivacyType}', '{page.CustomCss}');", connection)) 
                 {
                     connection.Open();
                     await command.ExecuteNonQueryAsync();
@@ -111,7 +111,7 @@ namespace LogTheDay.Controllers.Infrastructure
             {
                 // не защищено от SQL-инъекций
                 using (var command = new NpgsqlCommand(
-                    $"UPDATE public.pages SET user_id = '{page.OwnerId}', page_type = '{page.PageType}', privacy_type = '{page.PrivacyType}', custom_css = '{page.CustomCss}' WHERE id = '{page.Id}';", connection))
+                    $"UPDATE public.pages SET user_id = '{page.UserId}', page_type = '{page.PageType}', privacy_type = '{page.PrivacyType}', custom_css = '{page.CustomCss}' WHERE id = '{page.Id}';", connection))
                 {
                     connection.Open();
                     await command.ExecuteNonQueryAsync();
