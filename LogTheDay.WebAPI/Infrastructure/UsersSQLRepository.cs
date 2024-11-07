@@ -1,15 +1,15 @@
-﻿using LogTheDay.Controllers.Domain.Entities;
-using LogTheDay.Controllers.Domain.Interfaces;
-using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+﻿using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using Npgsql;
+using NuGet.Common;
 using System.Data;
 using System.Xml.Linq;
 
-namespace LogTheDay.Controllers.Infrastructure
+namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
 {
     // Реализация взаимодействия с базой, которая используется из UsersCRUDController
     public class UsersSQLRepository : IUsersRepository
@@ -51,7 +51,7 @@ namespace LogTheDay.Controllers.Infrastructure
         }*/
 
 
-        public async Task<User> GetUserById(Guid id)
+        public async Task<User> GetUserByIdAsync(Guid id)
         {
             User? result = null;
             using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("MainConnectionString")))
@@ -76,7 +76,7 @@ namespace LogTheDay.Controllers.Infrastructure
             return result;
         }
 
-        public async Task<IEnumerable<User>> GetUsersByQuery(string sqlQuery)
+        public async Task<IEnumerable<User>> GetUsersByQueryAsync(string sqlQuery)
         {
             var result = new List<User>();
             using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("MainConnectionString")))
@@ -102,7 +102,7 @@ namespace LogTheDay.Controllers.Infrastructure
             return result;
         }
 
-        public async Task DeleteUser(Guid id)
+        public async Task DeleteUserAsync(Guid id)
         {
             using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("MainConnectionString")))
             {
@@ -115,12 +115,12 @@ namespace LogTheDay.Controllers.Infrastructure
         }
 
 
-        public async Task<IEnumerable<User>> GetAll()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
-            return await GetUsersByQuery("SELECT * FROM public.users");
+            return await GetUsersByQueryAsync("SELECT * FROM public.users");
         }
 
-        public async Task AddUser(User user)
+        public async Task AddUserAsync(User user)
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
             using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("MainConnectionString")))
@@ -135,7 +135,7 @@ namespace LogTheDay.Controllers.Infrastructure
             }
         }
 
-        public async Task UpdateUser(User user)
+        public async Task UpdateUserAsync(User user)
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
             using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("MainConnectionString")))

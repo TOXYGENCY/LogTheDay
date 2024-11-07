@@ -1,11 +1,10 @@
-﻿using LogTheDay.Controllers.Domain.Interfaces;
-using LogTheDay.Controllers.Domain.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 
-namespace LogTheDay.Controllers
+namespace LogTheDay.LogTheDay.WebAPI.Controllers
 {
     // Контроллер, который слушает API каналы на HTTP запросы, и вызывает нужные методы из UsersSQLRepository
     [Route("api/v1/users-crud")]
@@ -13,31 +12,37 @@ namespace LogTheDay.Controllers
     public class UsersCRUDController : ControllerBase
     {
         private readonly IUsersRepository _usersRepository;
-        // Вставляем репозиторий напрямую - без сервиса
-        public UsersCRUDController(IUsersRepository usersRepository)
+        //IUsersService _usersService;
+        ILogger<UsersCRUDController> _logger;
+
+        // (?) Вставляем репозиторий напрямую - без сервиса IUsersService usersService
+        public UsersCRUDController(IUsersRepository usersRepository, ILogger<UsersCRUDController> logger)
         {
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
+            //_usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
             try
             {
-                return Ok(await _usersRepository.GetAll());
+                return Ok(await _usersRepository.GetAllAsync());
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "error");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(Guid id)
+        public async Task<IActionResult> GetUserByIdAsync(Guid id)
         {
             try
             {
-                var result = await this._usersRepository.GetUserById(id);
+                var result = await _usersRepository.GetUserByIdAsync(id);
                 if (result == null)
                 {
                     return BadRequest($"Нет пользователя с ID: {id}");
@@ -47,50 +52,54 @@ namespace LogTheDay.Controllers
             catch (Exception ex)
             {
                 {
+                    _logger.LogError(ex, "error");
                     return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
                 }
             }
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        public async Task<IActionResult> DeleteUserAsync(Guid id)
         {
             try
             {
-                await this._usersRepository.DeleteUser(id);
+                await _usersRepository.DeleteUserAsync(id);
                 return Ok();
             }
             catch (Exception ex)
             {
                 {
+                    _logger.LogError(ex, "error");
                     return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
                 }
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser(User user)
+        public async Task<IActionResult> AddUserAsync(User user)
         {
             try
             {
-                await _usersRepository.AddUser(user);
+                await _usersRepository.AddUserAsync(user);
                 return Ok();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "error");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateUser(User user)
+        public async Task<IActionResult> UpdateUserAsync(User user)
         {
             try
             {
-                await _usersRepository.UpdateUser(user);
+                await _usersRepository.UpdateUserAsync(user);
                 return Ok();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "error");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }

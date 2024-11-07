@@ -1,17 +1,16 @@
-﻿using LogTheDay.Controllers.Domain.Entities;
-using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+﻿using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
 
-namespace LogTheDay.Controllers.Domain.Interfaces
+namespace LogTheDay.LogTheDay.WebAPI.Domain.Interfaces
 {
     // Базовые действия над пользователями в отношении базы данных
     public interface IUsersRepository
     {
-        Task AddUser(User user);
-        Task<User> GetUserById(Guid id);
-        Task<IEnumerable<User>> GetAll();
-        Task<IEnumerable<User>> GetUsersByQuery(string query);
-        Task UpdateUser(User user);
-        Task DeleteUser(Guid id);
+        Task AddUserAsync(User user);
+        Task<User> GetUserByIdAsync(Guid id);
+        Task<IEnumerable<User>> GetAllAsync();
+        Task<IEnumerable<User>> GetUsersByQueryAsync(string query);
+        Task UpdateUserAsync(User user);
+        Task DeleteUserAsync(Guid id);
 
     }
 }

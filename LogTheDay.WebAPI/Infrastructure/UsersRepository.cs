@@ -1,5 +1,5 @@
-﻿using LogTheDay.Controllers.Domain.Interfaces;
-using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+﻿using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 
 namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
 {
@@ -12,32 +12,32 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             this._context = new LogTheDayContext();
         }
 
-        public Task AddUser(User user)
+        public async Task AddUserAsync(User user)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteUser(Guid id)
+        public async Task DeleteUserAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<User>> GetAll()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<User> GetUserById(Guid id)
+        public async Task<User> GetUserByIdAsync(Guid id)
         {
             return this._context.Users.FirstOrDefault(user => user.Id == id);
         }
 
-        public Task<IEnumerable<User>> GetUsersByQuery(string query)
+        public async Task<IEnumerable<User>> GetUsersByQueryAsync(string query)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateUser(User user)
+        public async Task UpdateUserAsync(User user)
         {
             throw new NotImplementedException();
         }
