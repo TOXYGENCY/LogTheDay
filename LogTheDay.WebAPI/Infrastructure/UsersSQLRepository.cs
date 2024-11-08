@@ -135,7 +135,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             }
         }
 
-        public async Task UpdateUserAsync(User user)
+        public async Task ReplaceUserAsync(User user)
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
             using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("MainConnectionString")))

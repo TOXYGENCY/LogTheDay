@@ -7,6 +7,8 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure;
 
 public partial class LogTheDayContext : DbContext
 {
+    private readonly IConfiguration _configuration;
+
     public LogTheDayContext()
     {
     }
@@ -15,7 +17,7 @@ public partial class LogTheDayContext : DbContext
         : base(options)
     {
     }
-
+     
     public virtual DbSet<Attachment> Attachments { get; set; }
 
     public virtual DbSet<Note> Notes { get; set; }
@@ -26,6 +28,7 @@ public partial class LogTheDayContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=ConnectionStrings:MainConnectionString");
+   
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

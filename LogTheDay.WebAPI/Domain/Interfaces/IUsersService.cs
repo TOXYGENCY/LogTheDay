@@ -6,7 +6,8 @@ namespace LogTheDay.LogTheDay.WebAPI.Domain.Interfaces
     // не связанной с базовыми действиями элементов
     public interface IUsersService
     {
-        Task AuthenticateAsync(User user);
+        // Из сайта получим логин и уже захешированный пароль
+        Task AuthenticateAsync(string login, string password);
         Task ChangeNameAsync(User user, string NewName);
         Task RegisterNewUserAsync(User user);
         // что-то еще

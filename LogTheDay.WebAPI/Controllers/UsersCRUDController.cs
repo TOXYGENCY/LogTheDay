@@ -12,15 +12,13 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
     public class UsersCRUDController : ControllerBase
     {
         private readonly IUsersRepository _usersRepository;
-        //IUsersService _usersService;
-        ILogger<UsersCRUDController> _logger;
+        ILogger<UsersCRUDController> logger;
 
-        // (?) Вставляем репозиторий напрямую - без сервиса IUsersService usersService
+        // Вставляем репозиторий напрямую - без сервиса IUsersService usersService
         public UsersCRUDController(IUsersRepository usersRepository, ILogger<UsersCRUDController> logger)
         {
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
-            //_usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet]
@@ -32,7 +30,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "error");
+                logger.LogError(ex, "error");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -52,7 +50,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             catch (Exception ex)
             {
                 {
-                    _logger.LogError(ex, "error");
+                    logger.LogError(ex, "error");
                     return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
                 }
             }
@@ -68,7 +66,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             catch (Exception ex)
             {
                 {
-                    _logger.LogError(ex, "error");
+                    logger.LogError(ex, "error");
                     return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
                 }
             }
@@ -84,22 +82,22 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "error");
+                logger.LogError(ex, "error");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateUserAsync(User user)
+        public async Task<IActionResult> ReplaceUserAsync(User user)
         {
             try
             {
-                await _usersRepository.UpdateUserAsync(user);
+                await _usersRepository.ReplaceUserAsync(user);
                 return Ok();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "error");
+                logger.LogError(ex, "error");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }

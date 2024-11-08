@@ -9,7 +9,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Domain.Interfaces
         Task<User> GetUserByIdAsync(Guid id);
         Task<IEnumerable<User>> GetAllAsync();
         Task<IEnumerable<User>> GetUsersByQueryAsync(string query);
-        Task UpdateUserAsync(User user);
+        Task ReplaceUserAsync(User user);
         Task DeleteUserAsync(Guid id);
 
     }

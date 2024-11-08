@@ -1,5 +1,7 @@
 ﻿using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 using LogTheDay.LogTheDay.WebAPI.Infrastructure;
+using LogTheDay.LogTheDay.WebAPI.Services;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +17,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<IUsersRepository, UsersSQLRepository>();
+builder.Services.AddTransient<IUsersRepository, UsersRepository>();
 builder.Services.AddTransient<IPagesRepository, PagesSQLRepository>();
+builder.Services.AddTransient<IUsersService, UsersService>();
+builder.Services.AddDbContext<LogTheDayContext>(
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("MainConnectionString")));
 
 
 var app = builder.Build();
