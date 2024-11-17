@@ -7,10 +7,13 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .WriteTo.File("logs/LogTheDay.log", rollingInterval: RollingInterval.Day)
+    .MinimumLevel.Error()
+    .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}")
+    .WriteTo.File("logs/LogTheDay-.log", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}", rollingInterval: RollingInterval.Day,
+        rollOnFileSizeLimit: true,
+        fileSizeLimitBytes: 10485760, // 10 MB
+        retainedFileCountLimit: 31)
     .CreateLogger();
 
 builder.Services.AddControllers();
@@ -22,7 +25,7 @@ builder.Services.AddTransient<IPagesRepository, PagesSQLRepository>();
 builder.Services.AddTransient<IUsersService, UsersService>();
 builder.Services.AddDbContext<LogTheDayContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("MainConnectionString")));
-
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 

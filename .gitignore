@@ -55,6 +55,7 @@ dkms.conf
 /.vs
 /bin
 /obj
+/logs
 /bin/Debug/net8.0/LogTheDay_WebAPI.deps.json
 /bin/Debug/net8.0/LogTheDay_WebAPI.runtimeconfig.json
 /obj/Debug/net8.0/staticwebassets/msbuild.build.LogTheDay_WebAPI.props
