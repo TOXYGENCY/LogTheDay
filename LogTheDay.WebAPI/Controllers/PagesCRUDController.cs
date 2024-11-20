@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
 using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 
-namespace LogTheDay.Controllers
+namespace LogTheDay.LogTheDay.WebAPI.Controllers
 {
     // Контроллер, который слушает API каналы на HTTP запросы, и вызывает нужные методы из PagesSQLRepository
     [Route("api/v1/pages-crud")]
@@ -36,7 +36,7 @@ namespace LogTheDay.Controllers
         {
             try
             {
-                var result = await this._pagesRepository.GetPageById(id);
+                var result = await _pagesRepository.GetPageById(id);
                 if (result == null)
                 {
                     return BadRequest($"Нет листа с ID: {id}");
@@ -55,7 +55,7 @@ namespace LogTheDay.Controllers
         {
             try
             {
-                await this._pagesRepository.DeletePage(id);
+                await _pagesRepository.DeletePage(id);
                 return Ok();
             }
             catch (Exception ex)
