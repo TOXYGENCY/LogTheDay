@@ -1,4 +1,5 @@
-﻿using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
+﻿using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LogTheDay.LogTheDay.WebAPI.Controllers
@@ -18,12 +19,42 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             this.usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-
-        [HttpPost("auth")] // Из сайта получим логин и уже захешированный пароль для сравнения с бд
-        public async Task<IActionResult> AuthenticateAsync(string login, string password_hash)
+        //TODO: доделать вообще все - пока что тут все наугад
+        [HttpPost("auth")] 
+        public async Task<IActionResult> AuthenticateAsync(string login, string PasswordHash)
         {
-            await usersService.AuthenticateAsync(login, password_hash);
+            await usersService.AuthenticateAsync(login, PasswordHash);
             return Ok();
+        }
+
+        [HttpPost("reg")]
+        public async Task<IActionResult> RegisterNewUserAsync(string Name, string Email, string PasswordHash)
+        {
+            try
+            {
+                await usersService.RegisterNewUserAsync(Name, Email.ToLower(), PasswordHash);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "error");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost("{id}/ChangeName")]
+        public async Task<IActionResult> ChangeNameAsync(Guid id, string NewName)
+        {
+            try
+            {
+                await usersService.ChangeNameAsync(id, NewName);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "error");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }

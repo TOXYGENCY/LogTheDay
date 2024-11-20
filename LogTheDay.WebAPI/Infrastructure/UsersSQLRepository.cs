@@ -11,6 +11,7 @@ using System.Xml.Linq;
 
 namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
 {
+    // РУДИМЕНТ - НЕ ИСПОЛЬЗУЕТСЯ
     // Реализация взаимодействия с базой, которая используется из UsersCRUDController
     public class UsersSQLRepository : IUsersRepository
     {
@@ -148,6 +149,16 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
                     await command.ExecuteNonQueryAsync();
                 }
             }
+        }
+
+        public Task<IEnumerable<User>> GetUsersByQueryAsync(string name = null, string email = null, DateOnly? regDate = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UserExistsByName(string name)
+        {
+            throw new NotImplementedException();
         }
     }
 }

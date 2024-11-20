@@ -8,8 +8,8 @@ namespace LogTheDay.LogTheDay.WebAPI.Domain.Interfaces
     {
         // Из сайта получим логин и уже захешированный пароль
         Task AuthenticateAsync(string login, string password);
-        Task ChangeNameAsync(User user, string NewName);
-        Task RegisterNewUserAsync(User user);
+        Task ChangeNameAsync(Guid id, string NewName);
+        Task RegisterNewUserAsync(string Name, string Email, string PasswordHash);
         // что-то еще
     }
 }

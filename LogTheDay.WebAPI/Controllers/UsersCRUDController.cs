@@ -41,10 +41,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             try
             {
                 var result = await _usersRepository.GetUserByIdAsync(id);
-                if (result == null)
-                {
-                    return BadRequest($"Нет пользователя с ID: {id}");
-                }
+                if (result == null){return BadRequest($"Нет пользователя с ID: {id}");}
                 return Ok(result);
             }
             catch (Exception ex)
@@ -55,6 +52,25 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
                 }
             }
         }
+
+        [HttpGet("query")] // TODO: убрать контроллер, потому что он тестовый
+        public async Task<IActionResult> GetUsersByQueryAsync(string name = null, string email = null, DateOnly? regDate = null)
+        {
+            try
+            {
+                var result = await _usersRepository.GetUsersByQueryAsync(name, email, regDate);
+                if (result == null){return BadRequest($"Нет пользователей с: {name}, {email}, {regDate}");}
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                {
+                    logger.LogError(ex, "error");
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                }
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUserAsync(Guid id)
         {

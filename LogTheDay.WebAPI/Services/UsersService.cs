@@ -8,20 +8,32 @@ namespace LogTheDay.LogTheDay.WebAPI.Services
 
     public class UsersService : IUsersService
     {
-        public Task AuthenticateAsync(string login, string password_hash)
+        private readonly IUsersRepository _usersRepository;
+        public UsersService(IUsersRepository usersRepository) {
+            this._usersRepository = usersRepository;
+        }
+        // TODO: хеширование пароля
+        public async Task AuthenticateAsync(string login, string password_hash)
         {
-            // сравнить хеш пароля и логина с базой данных 
+            // TODO: сравнить хеш пароля и логина с базой данных 
 
             throw new NotImplementedException();
         }
 
-        public Task ChangeNameAsync(User user, string NewName)
+        public async Task ChangeNameAsync(User user, string NewName)
         {
+            // TODO: проверить нет ли такого логина в бд и изменить имя
             throw new NotImplementedException();
         }
 
-        public Task RegisterNewUserAsync(User user)
+        public async Task RegisterNewUserAsync(string Name, string Email, string PasswordHash)
         {
+            if (await _usersRepository.UserExistsByName(Name)){
+                throw new Exception($"Пользователь с именем \"{Name}\" уже существует. Введите другое имя пользователя.");}
+            DateOnly RegDate = DateOnly.FromDateTime(DateTime.Now);
+
+            //var existingUser = _usersRepository.GetUsersByQueryAsync();
+            // TODO: проверить нет ли такого логина в бд и добавить
             throw new NotImplementedException();
         }
     }
