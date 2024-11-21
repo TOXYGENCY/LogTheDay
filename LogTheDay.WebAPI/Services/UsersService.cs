@@ -20,7 +20,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Services
             throw new NotImplementedException();
         }
 
-        public async Task ChangeNameAsync(User user, string NewName)
+        public async Task ChangeNameAsync(Guid id, string NewName)
         {
             // TODO: проверить нет ли такого логина в бд и изменить имя
             throw new NotImplementedException();

@@ -8,9 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="LogTheDay.WebAPI\LogTheDay.Tests\bin\**" />
+    <Compile Remove="LogTheDay.WebAPI\LogTheDay.Tests\obj\**" />
     <Compile Remove="unsorted_files\**" />
+    <Content Remove="LogTheDay.WebAPI\LogTheDay.Tests\bin\**" />
+    <Content Remove="LogTheDay.WebAPI\LogTheDay.Tests\obj\**" />
     <Content Remove="unsorted_files\**" />
+    <EmbeddedResource Remove="LogTheDay.WebAPI\LogTheDay.Tests\bin\**" />
+    <EmbeddedResource Remove="LogTheDay.WebAPI\LogTheDay.Tests\obj\**" />
     <EmbeddedResource Remove="unsorted_files\**" />
+    <None Remove="LogTheDay.WebAPI\LogTheDay.Tests\bin\**" />
+    <None Remove="LogTheDay.WebAPI\LogTheDay.Tests\obj\**" />
     <None Remove="unsorted_files\**" />
   </ItemGroup>
 
