@@ -56,8 +56,8 @@ dkms.conf
 /bin
 /obj
 /logs
-\LogTheDay.WebAPI\LogTheDay.Tests\bin
-\LogTheDay.WebAPI\LogTheDay.Tests\obj
+/LogTheDay.WebAPI/LogTheDay.Tests/bin
+/LogTheDay.WebAPI/LogTheDay.Tests/obj
 /bin/Debug/net8.0/LogTheDay_WebAPI.deps.json
 /bin/Debug/net8.0/LogTheDay_WebAPI.runtimeconfig.json
 /obj/Debug/net8.0/staticwebassets/msbuild.build.LogTheDay_WebAPI.props
@@ -81,3 +81,4 @@ dkms.conf
 /LogTheDay_WebAPI.http
 /LogTheDay_WebAPI.sln
 /LogTheDay.WebAPI/LogTheDay.Tests/bin/Debug/net8.0/LogTheDay.WebAPI/LogTheDay.Tests/bin/Debug/net8.0
+/LogTheDay.WebAPI/LogTheDay.Tests/bin/Debug/net8.0

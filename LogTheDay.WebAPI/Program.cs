@@ -23,8 +23,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IUsersRepository, UsersRepository>();
 builder.Services.AddTransient<IPagesRepository, PagesSQLRepository>();
 builder.Services.AddTransient<IUsersService, UsersService>();
+// TODO: настроить подключение через переменные среды
 builder.Services.AddDbContext<LogTheDayContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("MainConnectionString")));
+
 builder.Host.UseSerilog();
 
 var app = builder.Build();
