@@ -10,17 +10,17 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       
-      - name: sudo # Установка и обновление sudo для докера
+      - name: Установка и обновление sudo для докера
         run: |
             apt update && apt install sudo     
             
-      - # Установка docker   
-        name: Set up docker
+      - 
+        name: Установка docker
         run: |
           curl -sSL https://get.docker.com/ | sudo sh    
     
       - name: docker build
-        working-directory: LogTheDay.WebApi
+        working-directory: .
         run: |
             ls -l
             docker build . -t logtheday
