@@ -20,7 +20,7 @@ jobs:
           curl -sSL https://get.docker.com/ | sudo sh    
     
       - name: docker build
-        working-directory: ./LogTheDay.WebApi
+        working-directory: LogTheDay.WebApi
         run: |
             ls -l
             docker build . -t logtheday
