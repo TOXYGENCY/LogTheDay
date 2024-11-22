@@ -1,0 +1,26 @@
+name: CI на Gitverse
+on:
+  push:
+jobs:
+  build:
+    name: Checkout and build
+    runs-on: ubuntu-latest
+    steps:      
+      - 
+        name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: sudo # Установка и обновление sudo для докера
+        run: |
+            apt update && apt install sudo     
+            
+      - # Установка docker   
+        name: Set up docker
+        run: |
+          curl -sSL https://get.docker.com/ | sudo sh    
+    
+      - name: docker build
+        working-directory: ./LogTheDay.WebApi
+        run: |
+            ls -l
+            docker build . -t logtheday

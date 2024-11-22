@@ -82,3 +82,4 @@ dkms.conf
 /LogTheDay_WebAPI.sln
 /LogTheDay.WebAPI/LogTheDay.Tests/bin/Debug/net8.0/LogTheDay.WebAPI/LogTheDay.Tests/bin/Debug/net8.0
 /LogTheDay.WebAPI/LogTheDay.Tests/bin/Debug/net8.0
+/LogTheDay.csproj.user
