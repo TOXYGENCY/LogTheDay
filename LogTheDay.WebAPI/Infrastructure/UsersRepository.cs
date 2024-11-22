@@ -52,14 +52,6 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             propertyToChange.SetValue(subject, value);
         }//
 
-        public async Task<bool> UserExistsByName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name)){throw new ArgumentException("Свойство не указано.", nameof(name));}
-
-            User potentialUser = await context.Users.FirstOrDefaultAsync(user => user.Name == name);
-            return potentialUser != null;
-        }
-
         public async Task<IEnumerable<User>> GetUsersByQueryAsync(string name = null, string email = null, DateOnly? regDate = null)
         {
             // Проверка на null в переданных агрументах
@@ -86,6 +78,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             ChangeProperty(propertyName, value, user);
             await this.context.SaveChangesAsync();
         }
+
         // TODO: еще не работает
         public async Task ReplaceUserAsync(User new_user)
         {

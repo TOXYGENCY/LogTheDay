@@ -1,4 +1,5 @@
 ﻿using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+using LogTheDay.LogTheDay.WebAPI.Domain.Exceptions;
 using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
@@ -21,13 +22,13 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             this.usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        //TODO: доделать вообще все - пока что тут все наугад
-        [HttpPost("auth")] 
-        public async Task<IActionResult> AuthenticateAsync(string login, string PasswordHash)
+
+        [HttpPost("auth")]
+        public async Task<IActionResult> AuthenticateAsync(string Email, string PasswordHash)
         {
             try
             {
-                await usersService.AuthenticateAsync(login, PasswordHash);
+                await usersService.AuthenticateAsync(Email, PasswordHash);
                 return Ok();
             }
             catch (Exception ex)
@@ -37,7 +38,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             }
         }
 
-        [HttpPost("reg")]
+        [HttpPost("register")]
         public async Task<IActionResult> RegisterNewUserAsync(string Name, string Email, string PasswordHash)
         {
             try
@@ -45,6 +46,16 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
                 await usersService.RegisterNewUserAsync(Name, Email.ToLower(), PasswordHash);
                 return Ok();
             }
+            catch (ArgumentNullException ex)
+            {
+                logger.LogError(ex, "error");
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
+            catch (EmailTakenException ex)
+            {
+                logger.LogError(ex, "error");
+                return StatusCode(StatusCodes.Status409Conflict, ex.Message);
+            }
             catch (Exception ex)
             {
                 logger.LogError(ex, "error");
@@ -52,7 +63,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             }
         }
 
-        [HttpPost("{id}/ChangeName")]
+        [HttpPost("{id}/nameChange")]
         public async Task<IActionResult> ChangeNameAsync(Guid id, string NewName)
         {
             try
@@ -87,33 +98,29 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             try
             {
                 var result = await _usersRepository.GetUserByIdAsync(id);
-                if (result == null) { return BadRequest($"Нет пользователя с ID: {id}"); }
+                if (result == null) return BadRequest($"Нет пользователя с ID: {id}");
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                {
-                    logger.LogError(ex, "error");
-                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-                }
+                logger.LogError(ex, "error");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpGet("query")] // TODO?: убрать контроллер, потому что он тестовый
-        public async Task<IActionResult> GetUsersByQueryAsync(string name = null, string email = null, DateOnly? regDate = null)
+        public async Task<IActionResult> GetUsersByQueryAsync(string Name = null, string Email = null, DateOnly? RegDate = null)
         {
             try
             {
-                var result = await _usersRepository.GetUsersByQueryAsync(name, email, regDate);
-                if (result == null) { return BadRequest($"Нет пользователей с: {name}, {email}, {regDate}"); }
+                var result = await _usersRepository.GetUsersByQueryAsync(Name, Email, RegDate);
+                if (result == null) { return BadRequest($"Нет пользователей с: {Name}, {Email}, {RegDate}"); }
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                {
-                    logger.LogError(ex, "error");
-                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-                }
+                logger.LogError(ex, "error");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -125,21 +132,24 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
                 await _usersRepository.DeleteUserAsync(id);
                 return Ok();
             }
+            catch (KeyNotFoundException ex)
+            {
+                logger.LogError(ex, "error");
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
             catch (Exception ex)
             {
-                {
-                    logger.LogError(ex, "error");
-                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-                }
+                logger.LogError(ex, "error");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> ReplaceUserAsync(User user)
+        public async Task<IActionResult> ReplaceUserAsync(User User)
         {
             try
             {
-                await _usersRepository.ReplaceUserAsync(user);
+                await _usersRepository.ReplaceUserAsync(User);
                 return Ok();
             }
             catch (Exception ex)

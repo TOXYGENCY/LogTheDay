@@ -7,9 +7,10 @@ namespace LogTheDay.LogTheDay.WebAPI.Domain.Interfaces
     public interface IUsersService
     {
         // Из сайта получим логин и уже захешированный пароль
-        Task AuthenticateAsync(string login, string password);
-        Task ChangeNameAsync(Guid id, string NewName);
+        Task AuthenticateAsync(string Email, string PasswordHash);
+        Task ChangeNameAsync(Guid Id, string NewName);
         Task RegisterNewUserAsync(string Name, string Email, string PasswordHash);
+        Task<bool> UserExistsWithEmail(string Email);
         // что-то еще
     }
 }

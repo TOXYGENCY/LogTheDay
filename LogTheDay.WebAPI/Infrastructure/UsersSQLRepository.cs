@@ -160,5 +160,10 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
         {
             throw new NotImplementedException();
         }
+
+        public Task UpdateUserAsync(Guid id, string propertyName, object value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
