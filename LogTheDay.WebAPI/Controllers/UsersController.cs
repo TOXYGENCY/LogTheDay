@@ -2,8 +2,6 @@
 using LogTheDay.LogTheDay.WebAPI.Domain.Exceptions;
 using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using System.Xml.Linq;
 
 namespace LogTheDay.LogTheDay.WebAPI.Controllers
 {
@@ -24,12 +22,11 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         }
 
         [HttpPost("auth")]
-        public async Task<IActionResult> AuthenticateAsync(string Email, string PasswordHash)
+        public async Task<IActionResult> AuthenticateAsync(string email, string passwordString)
         {
             try
             {
-                await usersService.AuthenticateAsync(Email, PasswordHash);
-                return Ok();
+                return Ok(await usersService.AuthenticateAsync(email, passwordString));
             }
             catch (Exception ex)
             {
@@ -37,13 +34,13 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
+        // TODO: избавиться от промежуточных исключений и перейти к передаче ответа как объекта
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterNewUserAsync(string Name, string Email, string PasswordHash)
+        public async Task<IActionResult> RegisterNewUserAsync(string name, string email, string passwordString)
         {
             try
             {
-                await usersService.RegisterNewUserAsync(Name, Email.ToLower(), PasswordHash);
+                await usersService.RegisterNewUserAsync(name, email.ToLower(), passwordString);
                 return Ok();
             }
             catch (ArgumentNullException ex)
@@ -64,11 +61,11 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         }
 
         [HttpPost("{id}/nameChange")]
-        public async Task<IActionResult> ChangeNameAsync(Guid id, string NewName)
+        public async Task<IActionResult> ChangeNameAsync(Guid id, string newName)
         {
             try
             {
-                await usersService.ChangeNameAsync(id, NewName);
+                await usersService.ChangeNameAsync(id, newName);
                 return Ok();
             }
             catch (Exception ex)
@@ -109,12 +106,12 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         }
 
         [HttpGet("query")] // TODO?: убрать контроллер, потому что он тестовый
-        public async Task<IActionResult> GetUsersByQueryAsync(string Name = null, string Email = null, DateOnly? RegDate = null)
+        public async Task<IActionResult> GetUsersByQueryAsync(string name = null, string email = null, DateOnly? regDate = null)
         {
             try
             {
-                var result = await _usersRepository.GetUsersByQueryAsync(Name, Email, RegDate);
-                if (result == null) { return BadRequest($"Нет пользователей с: {Name}, {Email}, {RegDate}"); }
+                var result = await _usersRepository.GetUsersByQueryAsync(name, email, regDate);
+                if (result == null) { return BadRequest($"Нет пользователей с: {name}, {email}, {regDate}"); }
                 return Ok(result);
             }
             catch (Exception ex)
@@ -145,11 +142,11 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> ReplaceUserAsync(User User)
+        public async Task<IActionResult> ReplaceUserAsync(User user)
         {
             try
             {
-                await _usersRepository.ReplaceUserAsync(User);
+                await _usersRepository.ReplaceUserAsync(user);
                 return Ok();
             }
             catch (Exception ex)

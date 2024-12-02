@@ -17,7 +17,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
 
         public async Task AddUserAsync(User user)
         {
-            if (user == null){throw new ArgumentNullException(nameof(user), "User = null.");}
+            if (user == null) throw new ArgumentNullException(nameof(user), "User = null.");
 
             this.context.Users.Add(user);
             await this.context.SaveChangesAsync();
@@ -39,60 +39,65 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
         {
             return await this.context.Users.FirstOrDefaultAsync(user => user.Id == id);
         }
-        
-        // Универсальный utility метод, пока не решил куда его назначить TODO
-        public void ChangeProperty<T>(string propertyName, object value, T subject)
+
+        public void ChangeUserName(User user, string name)
         {
-            if (string.IsNullOrEmpty(propertyName)){ throw new ArgumentException("Свойство не указано.", nameof(propertyName)); }
+            if (string.IsNullOrEmpty(name) || user is null)
+                throw new ArgumentException($"Новое имя {nameof(name)} или пользователь {nameof(user)} не указано.");
 
-            var propertyToChange = typeof(T).GetProperty(propertyName);
-            if (propertyToChange == null || !propertyToChange.CanWrite){
-                throw new ArgumentException($"Свойство '{propertyName}' не существует или не может быть изменено.");}
+            user.Name = name;
+        }
 
-            propertyToChange.SetValue(subject, value);
-        }//
-
+        // TODO: сделать через OData
         public async Task<IEnumerable<User>> GetUsersByQueryAsync(string name = null, string email = null, DateOnly? regDate = null)
         {
             // Проверка на null в переданных агрументах
             if (string.IsNullOrWhiteSpace(name) &&
                 string.IsNullOrWhiteSpace(email) &&
                 !regDate.HasValue)
-            {throw new ArgumentNullException("Ни один параметр поиска не указан");}
+            { throw new ArgumentNullException("Ни один параметр поиска не указан"); }
 
             // Начинаем с базового запроса к контексту
             IQueryable<User> query = this.context.Users;
 
             // Условно добавляем фильтры
-            if (!string.IsNullOrWhiteSpace(name)){query = query.Where(user => user.Name.ToLower().Contains(name.ToLower()));}
-            if (!string.IsNullOrWhiteSpace(email)){query = query.Where(user => user.Email.ToLower().Contains(email.ToLower()));}
-            if (regDate.HasValue){query = query.Where(user => user.RegDate == regDate.Value);}
+            if (!string.IsNullOrWhiteSpace(name)) { query = query.Where(user => user.Name.ToLower().Equals(name.ToLower())); }
+            if (!string.IsNullOrWhiteSpace(email)) { query = query.Where(user => user.Email.ToLower().Equals(email.ToLower())); }
+            if (regDate.HasValue) { query = query.Where(user => user.RegDate == regDate.Value); }
 
             return await query.ToListAsync(); ;
         }
 
-        // Указываем нужное свойство и его значение для изменения.
-        public async Task UpdateUserAsync(Guid id, string propertyName, object value)
+        public async Task ReplaceUserAsync(User newUser)
         {
-            User? user = await this.GetUserByIdAsync(id) ?? throw new KeyNotFoundException($"Нет пользователя с id = {id}");
-            ChangeProperty(propertyName, value, user);
-            await this.context.SaveChangesAsync();
-        }
+            // Начинаем транзакцию, чтобы в случае неудачи откатить изменения
+            using (var transaction = await this.context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    if (newUser == null) throw new ArgumentNullException(nameof(newUser));
 
-        // TODO: еще не работает
-        public async Task ReplaceUserAsync(User new_user)
-        {
-            if (new_user == null){throw new ArgumentNullException(nameof(new_user));}
+                    User? currentUser = await this.GetUserByIdAsync(newUser.Id);
+                    if (currentUser == null) throw new KeyNotFoundException($"Нет пользователя с id = {newUser.Id}");
 
-            User? current_user = await this.GetUserByIdAsync(new_user.Id);
-            if (current_user == null){throw new KeyNotFoundException($"Нет пользователя с id = {new_user.Id}");}
-
-            current_user.Name = new_user.Name;
-            current_user.Email = new_user.Email;
-            current_user.PasswordHash = new_user.PasswordHash;
-            current_user.RegDate = new_user.RegDate;
-            //current_user.Pages = new_user.Pages; - это надо поменять
-            await this.context.SaveChangesAsync();
+                    currentUser.Name = newUser.Name;
+                    currentUser.Email = newUser.Email;
+                    currentUser.PasswordHash = newUser.PasswordHash;
+                    //currentUser.RegDate = newUser.RegDate;
+                    currentUser.Pages.Clear(); 
+                    foreach (var page in newUser.Pages)
+                    {
+                        currentUser.Pages.Add(page);
+                    }
+                    await this.context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
     }
 }

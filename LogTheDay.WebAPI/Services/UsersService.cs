@@ -2,6 +2,8 @@
 using LogTheDay.LogTheDay.WebAPI.Domain.Exceptions;
 using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace LogTheDay.LogTheDay.WebAPI.Services
 {
@@ -11,50 +13,65 @@ namespace LogTheDay.LogTheDay.WebAPI.Services
     public class UsersService : IUsersService
     {
         private readonly IUsersRepository _usersRepository;
+        private readonly PasswordHasher<object> hasher;
         public UsersService(IUsersRepository usersRepository)
         {
             this._usersRepository = usersRepository;
+            hasher = new PasswordHasher<object>();
         }
-        // TODO: хеширование пароля
-        public async Task AuthenticateAsync(string Email, string PasswordHash)
+        // хеширование пароля
+        protected string HashPassword(string password)
         {
-            // TODO: думаю над архитектурой приложения и метода 
-
-            throw new NotImplementedException();
+            return hasher.HashPassword(null, password);
         }
-
-        public async Task ChangeNameAsync(Guid Id, string NewName)
+        protected bool VerifyPassword(string hashedPassword, string providedPasswordString)
         {
-            if (string.IsNullOrEmpty(NewName)) throw new ArgumentNullException($"Новое имя {nameof(NewName)} не передано.");
-            await _usersRepository.UpdateUserAsync(Id, "Name", NewName);
+            return hasher.VerifyHashedPassword(null, hashedPassword, providedPasswordString) == PasswordVerificationResult.Success
+                ?  true : false;
         }
 
-        public async Task RegisterNewUserAsync(string Name, string Email, string PasswordHash)
+        public async Task<bool> AuthenticateAsync(string email, string passwordString)
         {
-            if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(PasswordHash))
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(passwordString)) throw new ArgumentNullException(nameof(email), nameof(passwordString));
+            if (!await this.UserExistsWithEmailAsync(email)) throw new KeyNotFoundException(nameof(email));
+            IEnumerable<User> requestedAccountArr = await _usersRepository.GetUsersByQueryAsync(email: email);
+
+            return this.VerifyPassword(requestedAccountArr.First().PasswordHash, passwordString);
+        }
+
+        public async Task ChangeNameAsync(Guid id, string newName)
+        {
+            if (string.IsNullOrEmpty(newName)) throw new ArgumentNullException($"Новое имя {nameof(newName)} не передано.");
+            User? user = await  _usersRepository.GetUserByIdAsync(id);
+            _usersRepository.ChangeUserName(user, newName);
+        }
+
+        public async Task RegisterNewUserAsync(string name, string email, string passwordString)
+        {
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(passwordString))
                 throw new ArgumentNullException("Either Name is null OR Email is null OR PasswordHash is null");
 
-            if (await this.UserExistsWithEmail(Email))
-                throw new EmailTakenException(Email);
+            if (await this.UserExistsWithEmailAsync(email))
+                throw new EmailTakenException(email);
 
-            DateOnly RegDate = DateOnly.FromDateTime(DateTime.Now);
+            DateOnly regDate = DateOnly.FromDateTime(DateTime.Now);
             var newUser = new User
             {
                 Id = Guid.NewGuid(),
-                Name = Name,
-                Email = Email,
-                PasswordHash = PasswordHash,
-                RegDate = RegDate
+                Name = name,
+                Email = email,
+                PasswordHash = this.HashPassword(passwordString),
+                RegDate = regDate
                 // Pages будет автоматически инициализировано пустым списком
             };
             await _usersRepository.AddUserAsync(newUser);
         }
 
-        public async Task<bool> UserExistsWithEmail(string Email)
+        public async Task<bool> UserExistsWithEmailAsync(string email)
         {
-            if (string.IsNullOrWhiteSpace(Email)) throw new ArgumentException("Email не указан.", nameof(Email));
+            if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Email не указан.", nameof(email));
 
-            IEnumerable<User> potentialUser = await _usersRepository.GetUsersByQueryAsync(email: Email);
+            IEnumerable<User> potentialUser = await _usersRepository.GetUsersByQueryAsync(email: email);
             return potentialUser.Any();
         }
     }

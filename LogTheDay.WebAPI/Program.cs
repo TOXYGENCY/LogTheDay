@@ -27,6 +27,15 @@ builder.Services.AddTransient<IUsersService, UsersService>();
 builder.Services.AddDbContext<LogTheDayContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("MainConnectionString")));
 
+// Временная мера
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("http://localhost:4200")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
+
 builder.Host.UseSerilog();
 
 var app = builder.Build();
@@ -39,6 +48,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthorization();
 

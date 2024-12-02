@@ -165,5 +165,10 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
         {
             throw new NotImplementedException();
         }
+
+        public void ChangeUserName(User user, string name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
