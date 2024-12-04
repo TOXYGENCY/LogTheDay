@@ -11,6 +11,8 @@ public partial class Attachment
 
     public string Type { get; set; } = null!;
 
+    public string ContentLink { get; set; } = null!;
+
     public string? FileType { get; set; }
 
     public Guid NoteId { get; set; }

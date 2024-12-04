@@ -6,12 +6,12 @@ namespace LogTheDay.LogTheDay.WebAPI.Domain.Interfaces
 
     public interface IPagesRepository
     {
-        Task AddPage(Page page);
-        Task<Page> GetPageById(Guid id);
-        Task<IEnumerable<Page>> GetAll();
-        Task<IEnumerable<Page>> GetPagesByQuery(string query);
-        Task UpdatePage(Page page);
-        Task DeletePage(Guid id);
+        Task<Result<None>> AddPageAsync(Page page);
+        Task<Result<Page>> GetPageByIdAsync(Guid id);
+        Task<Result<IEnumerable<Page>>> GetAllAsync();
+        //Task<Result<IEnumerable<Page>>> GetPagesByQueryAsync(string query);
+        Task<Result<None>> ReplacePageAsync(Page page);
+        Task<Result<None>> DeletePageAsync(Guid id);
 
     }
 }

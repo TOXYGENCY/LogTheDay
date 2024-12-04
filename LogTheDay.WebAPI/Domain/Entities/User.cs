@@ -13,7 +13,13 @@ public partial class User
 
     public string PasswordHash { get; set; } = null!;
 
+    public string? AvatarImg { get; set; }
+
     public DateOnly RegDate { get; set; }
+
+    public TimeOnly RegTime { get; set; }
+
+    public DateOnly LastLoginDate { get; set; }
 
     public virtual ICollection<Page> Pages { get; set; } = new List<Page>();
 }

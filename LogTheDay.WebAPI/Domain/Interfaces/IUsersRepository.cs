@@ -12,6 +12,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Domain.Interfaces
         Task<Result<None>> ChangeUserName(User user, string name);
         Task<Result<None>> ReplaceUserAsync(User user);
         Task<Result<None>> DeleteUserAsync(Guid id);
+        Task<Result<None>> UpdateLastLoginDateAsync(User user);
 
     }
 }

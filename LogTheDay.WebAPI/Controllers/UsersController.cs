@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LogTheDay.LogTheDay.WebAPI.Controllers
 {
-    // Контроллер, который слушает API каналы на HTTP запросы, и вызывает нужные методы из UsersSQLRepository
+    // Контроллер, который слушает API каналы на HTTP запросы, и вызывает нужные методы из UsersRepository
     [Route("api/v1/users")]
     [ApiController]
     public class UsersController : Controller

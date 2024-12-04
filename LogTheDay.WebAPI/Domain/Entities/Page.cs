@@ -9,11 +9,25 @@ public partial class Page
 
     public Guid UserId { get; set; }
 
-    public string PageType { get; set; } = null!;
+    public string? Title { get; set; }
+
+    public string? Description { get; set; }
+
+    public string? IconLink { get; set; }
+
+    public string Type { get; set; } = null!;
 
     public int PrivacyType { get; set; }
 
     public string? CustomCss { get; set; }
+
+    public DateOnly CreationDate { get; set; }
+
+    public DateTime CreationTime { get; set; }
+
+    public DateOnly LastModifiedDate { get; set; }
+
+    public DateTime LastModifiedTime { get; set; }
 
     public virtual ICollection<Note> Notes { get; set; } = new List<Note>();
 

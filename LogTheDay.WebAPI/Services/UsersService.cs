@@ -94,7 +94,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Services
             {
                 return new Result<None>(false, null, nameChangeRes.Message);
             }
-
+            await _usersRepository.UpdateLastLoginDateAsync(user);
             return new Result<None>(true, null, nameChangeRes.Message);
         }
 
@@ -116,14 +116,15 @@ namespace LogTheDay.LogTheDay.WebAPI.Services
                 return new Result<None>(false, null, message);
             }
 
-            DateOnly regDate = DateOnly.FromDateTime(DateTime.Now);
-            var newUser = new User
+            User newUser = new User
             {
                 Id = Guid.NewGuid(),
                 Name = name,
                 Email = email,
                 PasswordHash = this.HashPassword(passwordString),
-                RegDate = regDate
+                //RegDate = DateOnly.FromDateTime(DateTime.Now),
+                //RegTime = DateTime.Now(),
+                //LastLoginDate = DateOnly
                 // Pages будет автоматически инициализировано пустым списком
             };
             Result<None> registrationRes = await _usersRepository.AddUserAsync(newUser);

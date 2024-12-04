@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql.TypeMapping;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
 {
@@ -19,20 +20,6 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-        public async Task<Result<User>> GetUserByIdAsync(Guid id)
-        {
-            User? user;
-            try
-            {
-                user = await this.context.Users.FirstOrDefaultAsync(user => user.Id == id);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Ошибка при поиске пользователя.");
-                return new Result<User>(false, null, $"Ошибка при поиске пользователя. {ex.Message}");
-            }
-            return new Result<User>(true, user);
         }
 
         public async Task<Result<None>> AddUserAsync(User user)
@@ -57,30 +44,19 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             return new Result<None>(true, null, "Пользователь добавлен.");
         }
 
-        public async Task<Result<None>> DeleteUserAsync(Guid id)
+        public async Task<Result<User>> GetUserByIdAsync(Guid id)
         {
-            Result<User> userRes = await this.GetUserByIdAsync(id);
-            if (!userRes.Success) return new Result<None>(false, null, userRes.Message);
-
-            User? user = userRes.Content;
-            if (user == null)
-            {
-                string message = $"Нет пользователя с id = {id}";
-                logger.LogWarning(message);
-                return new Result<None>(false, null, message);
-            }
+            User? user;
             try
             {
-                this.context.Remove(user);
-                await this.context.SaveChangesAsync();
+                user = await this.context.Users.FirstOrDefaultAsync(user => user.Id == id);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Ошибка при удалении пользователя.");
-                return new Result<None>(false, null, $"Ошибка при удалении пользователя. {ex.Message}");
+                logger.LogError(ex, "Ошибка при поиске пользователя.");
+                return new Result<User>(false, null, $"Ошибка при поиске пользователя. {ex.Message}");
             }
-
-            return new Result<None>(true, null, "Пользователь удален.");
+            return new Result<User>(true, user);
         }
 
         public async Task<Result<IEnumerable<User>>> GetAllAsync()
@@ -147,15 +123,14 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
                     Result<User> currentUserRes;
                     currentUserRes = await this.GetUserByIdAsync(replacementUser.Id);
                     if (!currentUserRes.Success || currentUserRes.Content == null)
-                    {
                         return new Result<None>(false, null, $"Нет пользователя с id = {replacementUser.Id}");
-                    }
+                    
                     currentUser = currentUserRes.Content;
-
                     currentUser.Name = replacementUser.Name;
                     currentUser.Email = replacementUser.Email;
                     currentUser.PasswordHash = replacementUser.PasswordHash;
-                    //currentUser.RegDate = newUser.RegDate;
+                    currentUser.AvatarImg = replacementUser.AvatarImg;
+                    currentUser.LastLoginDate = replacementUser.LastLoginDate;
                     currentUser.Pages.Clear();
                     foreach (var page in replacementUser.Pages)
                     {
@@ -192,6 +167,50 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
                 return new Result<None>(false, null, $"Ошибка при сохранении имени пользователя. {ex.Message}");
             }
             return new Result<None>(true, null, $"Имя пользователя заменено на {name}");
+        }
+        public async Task<Result<None>> DeleteUserAsync(Guid id)
+        {
+            Result<User> userRes = await this.GetUserByIdAsync(id);
+            if (!userRes.Success) return new Result<None>(false, null, userRes.Message);
+
+            User? user = userRes.Content;
+            if (user == null)
+            {
+                string message = $"Нет пользователя с id = {id}";
+                logger.LogWarning(message);
+                return new Result<None>(false, null, message);
+            }
+            try
+            {
+                this.context.Remove(user);
+                await this.context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Ошибка при удалении пользователя.");
+                return new Result<None>(false, null, $"Ошибка при удалении пользователя. {ex.Message}");
+            }
+
+            return new Result<None>(true, null, "Пользователь удален.");
+        }
+
+        public async Task<Result<None>> UpdateLastLoginDateAsync(User user)
+        {
+            if (user == null)
+                return new Result<None>(false, null, $"Не передан пользователь.");
+
+            user.LastLoginDate = DateOnly.FromDateTime(DateTime.Now);
+
+            try
+            {
+                await this.context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Ошибка при обновлении даты входа.");
+                return new Result<None>(false, null, $"Ошибка при обновлении даты входа. {ex.Message}");
+            }
+            return new Result<None>(true, null, $"Дата последнего входа обновлена на {user.LastLoginDate}");
         }
     }
 }
