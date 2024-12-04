@@ -11,12 +11,12 @@ using System.Xml.Linq;
 
 namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
 {
-    // Базовые действия над пользователями в отношении базы данных
+    // Базовые действия над {nameof(User)}ми в отношении базы данных
     public class UsersRepository : IUsersRepository
     {
         LogTheDayContext context;
-        ILogger<UsersController> logger;
-        public UsersRepository(LogTheDayContext context, ILogger<UsersController> logger)
+        ILogger<UsersRepository> logger;
+        public UsersRepository(LogTheDayContext context, ILogger<UsersRepository> logger)
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -37,11 +37,11 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Ошибка при добавлении пользователя.");
-                return new Result<None>(false, null, $"Ошибка при добавлении пользователя. {ex.Message}");
+                logger.LogError(ex, $"Ошибка при добавлении {nameof(User)}.");
+                return new Result<None>(false, null, $"Ошибка при добавлении {nameof(User)}: {ex.Message}");
             }
 
-            return new Result<None>(true, null, "Пользователь добавлен.");
+            return new Result<None>(true, null, $"{nameof(User)} добавлен.");
         }
 
         public async Task<Result<User>> GetUserByIdAsync(Guid id)
@@ -53,8 +53,8 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Ошибка при поиске пользователя.");
-                return new Result<User>(false, null, $"Ошибка при поиске пользователя. {ex.Message}");
+                logger.LogError(ex, $"Ошибка при поиске {nameof(User)}.");
+                return new Result<User>(false, null, $"Ошибка при поиске {nameof(User)}. {ex.Message}");
             }
             return new Result<User>(true, user);
         }
@@ -68,13 +68,13 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Ошибка при удалении пользователя.");
-                return new Result<IEnumerable<User>>(false, null, $"Ошибка при удалении пользователя. {ex.Message}");
+                logger.LogError(ex, $"Ошибка при удалении {nameof(User)}.");
+                return new Result<IEnumerable<User>>(false, null, $"Ошибка при удалении {nameof(User)}. {ex.Message}");
             }
-            return new Result<IEnumerable<User>>(true, users, "Пользователи получены.");
+            return new Result<IEnumerable<User>>(true, users, $"{nameof(User)}s получены.");
         }
 
-        // TODO: сделать через OData
+        // TODO: сделать через OData и добавить другие параметры
         public async Task<Result<IEnumerable<User>>> GetUsersByQueryAsync(string name = null, string email = null, DateOnly? regDate = null)
         {
             // Проверка на null в переданных агрументах
@@ -100,17 +100,17 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Ошибка при поиске пользователей.");
-                return new Result<IEnumerable<User>>(false, null, $"Ошибка при поиске пользователей. {ex.Message}");
+                logger.LogError(ex, $"Ошибка при поиске {nameof(User)}.");
+                return new Result<IEnumerable<User>>(false, null, $"Ошибка при поиске {nameof(User)}. {ex.Message}");
             }
-            return new Result<IEnumerable<User>>(true, await query.ToListAsync());
+            return new Result<IEnumerable<User>>(true, await query.ToListAsync(), "Поиск выполнен.");
         }
 
         public async Task<Result<None>> ReplaceUserAsync(User replacementUser)
         {
             if (replacementUser == null)
             {
-                string message = "Не передан объект замены пользователя.";
+                string message = $"Не передан объект замены {nameof(User)}.";
                 logger.LogWarning(message);
                 return new Result<None>(false, null, message);
             }
@@ -123,7 +123,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
                     Result<User> currentUserRes;
                     currentUserRes = await this.GetUserByIdAsync(replacementUser.Id);
                     if (!currentUserRes.Success || currentUserRes.Content == null)
-                        return new Result<None>(false, null, $"Нет пользователя с id = {replacementUser.Id}");
+                        return new Result<None>(false, null, $"Нет {nameof(User)} с id = {replacementUser.Id}");
                     
                     currentUser = currentUserRes.Content;
                     currentUser.Name = replacementUser.Name;
@@ -143,17 +143,17 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
                 {
                     await transaction.RollbackAsync();
                     logger.LogError(ex.Message);
-                    return new Result<None>(false, null, $"Ошибка при замене пользователя. Откат... {ex.Message}");
+                    return new Result<None>(false, null, $"Ошибка при замене {nameof(User)}. Откат... {ex.Message}");
                 }
 
-                return new Result<None>(true, null, $"Пользователь с id = {replacementUser.Id} заменен.");
+                return new Result<None>(true, null, $"{nameof(User)} с id = {replacementUser.Id} заменен.");
             }
         }
 
         public async Task<Result<None>> ChangeUserName(User user, string name)
         {
             if (string.IsNullOrEmpty(name) || user is null)
-                return new Result<None>(false, null, $"Новое имя {nameof(name)} или пользователь {nameof(user)} не указано.");
+                return new Result<None>(false, null, $"Новое имя {nameof(name)} или {nameof(User)} не указан.");
 
             user.Name = name;
 
@@ -163,10 +163,10 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Ошибка при сохранении имени пользователя.");
-                return new Result<None>(false, null, $"Ошибка при сохранении имени пользователя. {ex.Message}");
+                logger.LogError(ex, $"Ошибка при сохранении имени {nameof(User)}.");
+                return new Result<None>(false, null, $"Ошибка при сохранении имени {nameof(User)}. {ex.Message}");
             }
-            return new Result<None>(true, null, $"Имя пользователя заменено на {name}");
+            return new Result<None>(true, null, $"Имя {nameof(User)} заменено на {name}");
         }
         public async Task<Result<None>> DeleteUserAsync(Guid id)
         {
@@ -176,7 +176,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             User? user = userRes.Content;
             if (user == null)
             {
-                string message = $"Нет пользователя с id = {id}";
+                string message = $"Нет {nameof(User)} с id = {id}";
                 logger.LogWarning(message);
                 return new Result<None>(false, null, message);
             }
@@ -187,17 +187,17 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Ошибка при удалении пользователя.");
-                return new Result<None>(false, null, $"Ошибка при удалении пользователя. {ex.Message}");
+                logger.LogError(ex, $"Ошибка при удалении {nameof(User)}.");
+                return new Result<None>(false, null, $"Ошибка при удалении {nameof(User)}. {ex.Message}");
             }
 
-            return new Result<None>(true, null, "Пользователь удален.");
+            return new Result<None>(true, null, $"{nameof(User)} удален.");
         }
 
         public async Task<Result<None>> UpdateLastLoginDateAsync(User user)
         {
             if (user == null)
-                return new Result<None>(false, null, $"Не передан пользователь.");
+                return new Result<None>(false, null, $"Не передан {nameof(User)}.");
 
             user.LastLoginDate = DateOnly.FromDateTime(DateTime.Now);
 

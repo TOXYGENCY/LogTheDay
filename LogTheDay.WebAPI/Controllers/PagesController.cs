@@ -3,94 +3,111 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
 using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
+using LogTheDay.LogTheDay.WebAPI.Infrastructure;
+using LogTheDay.LogTheDay.WebAPI.Services;
 
 namespace LogTheDay.LogTheDay.WebAPI.Controllers
 {
-    // Контроллер, который слушает API каналы на HTTP запросы, и вызывает нужные методы из PagesSQLRepository
-    [Route("api/v1/pages-crud")]
+    // Контроллер, который слушает API каналы на HTTP запросы, и вызывает нужные методы из PagesRepository
+    [Route("api/v1/pages")]
     [ApiController]
     public class PagesController : ControllerBase
     {
         private readonly IPagesRepository _pagesRepository;
-        // Вставляем репозиторий напрямую - без сервиса
-        public PagesController(IPagesRepository pagesRepository)
+        IPagesService pagesService;
+
+        public PagesController(IPagesRepository pagesRepository, IPagesService pagesService)
         {
-            _pagesRepository = pagesRepository ?? throw new ArgumentNullException(nameof(pagesRepository));
+            this._pagesRepository = pagesRepository ?? throw new ArgumentNullException(nameof(pagesRepository));
+            this.pagesService = pagesService ?? throw new ArgumentNullException(nameof(pagesService));
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreateNewPageAsync(Page page)
+        {
+            Result<None> creationRes = await _pagesRepository.AddPageAsync(page);
+            if (creationRes.Success)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, creationRes.Message);
+            }
+        }
+
+        [HttpPost("{id}/infoChange")]
+        public async Task<IActionResult> ChangeInfoAsync(Guid id, string newTitle, string newDescription)
+        {
+            Result<Page> pageRes = await _pagesRepository.GetPageByIdAsync(id);
+            if (pageRes.Success) if (pageRes.Content == null) return BadRequest($"Нет {nameof(Page)} с ID: {id}");
+
+            Result<None> infoChangeRes = await _pagesRepository.ChangeInfoAsync(pageRes.Content, newTitle, newDescription);
+            if (infoChangeRes.Success)
+            {
+                return Ok(infoChangeRes.Message);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, infoChangeRes.Message);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            try
+            Result<IEnumerable<Page>> pagesArrRes = await _pagesRepository.GetAllAsync();
+            if (pagesArrRes.Success)
             {
-                return Ok(await _pagesRepository.GetAllAsync());
+                return Ok(pagesArrRes.Content);
             }
-            catch (Exception ex)
+            else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, pagesArrRes.Message);
             }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPageByIdAsync(Guid id)
         {
-            try
+            Result<Page> pageRes = await _pagesRepository.GetPageByIdAsync(id);
+            if (pageRes.Success)
             {
-                var result = await _pagesRepository.GetPageByIdAsync(id);
-                if (result == null)
-                {
-                    return BadRequest($"Нет листа с ID: {id}");
-                }
-                return Ok(result);
+                if (pageRes.Content == null) return BadRequest($"Нет {nameof(Page)} с ID: {id}");
+                return Ok(pageRes.Content);
             }
-            catch (Exception ex)
+            else
             {
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-                }
-            }
-        }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePageAsync(Guid id)
-        {
-            try
-            {
-                await _pagesRepository.DeletePageAsync(id);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-                }
+                return StatusCode(StatusCodes.Status500InternalServerError, pageRes.Message);
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddPageAsync(Page page)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePageAsync(Guid id)
         {
-            try
+            Result<None> deletionRes = await _pagesRepository.DeletePageAsync(id); ;
+            if (deletionRes.Success)
             {
-                await _pagesRepository.AddPageAsync(page);
-                return Ok();
+                return Ok(deletionRes.Message);
             }
-            catch (Exception ex)
+            else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status404NotFound, deletionRes.Message);
             }
         }
 
         [HttpPut]
         public async Task<IActionResult> ReplacePageAsync(Page page)
         {
-            try
+            Result<None> replacementRes = await _pagesRepository.ReplacePageAsync(page);
+            if (replacementRes.Success)
             {
-                await _pagesRepository.ReplacePageAsync(page);
-                return Ok();
+                return Ok(replacementRes.Message);
             }
-            catch (Exception ex)
+            else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, replacementRes.Message);
             }
         }
     }

@@ -21,8 +21,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IUsersRepository, UsersRepository>();
-//builder.Services.AddTransient<IPagesRepository, PagesSQLRepository>();
+builder.Services.AddTransient<IPagesRepository, PagesRepository>();
 builder.Services.AddTransient<IUsersService, UsersService>();
+builder.Services.AddTransient<IPagesService, PagesService>();
 // TODO: настроить подключение через переменные среды
 builder.Services.AddDbContext<LogTheDayContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("MainConnectionString")));

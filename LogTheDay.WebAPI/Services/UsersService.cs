@@ -15,8 +15,8 @@ namespace LogTheDay.LogTheDay.WebAPI.Services
     {
         private readonly IUsersRepository _usersRepository;
         private readonly PasswordHasher<object> hasher;
-        ILogger<UsersController> logger;
-        public UsersService(IUsersRepository usersRepository, ILogger<UsersController> logger)
+        ILogger<UsersService> logger;
+        public UsersService(IUsersRepository usersRepository, ILogger<UsersService> logger)
         {
             this._usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));

@@ -14,7 +14,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         //ILogger<UsersController> logger;
         IUsersService usersService;
 
-        public UsersController(IUsersRepository usersRepository, IUsersService usersService, ILogger<UsersController> logger)
+        public UsersController(IUsersRepository usersRepository, IUsersService usersService) //, ILogger<UsersController> logger)
         {
             this._usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             this.usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
