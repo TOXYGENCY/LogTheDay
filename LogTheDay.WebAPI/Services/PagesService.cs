@@ -25,7 +25,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Services
                 return new Result<None>(false, null, message);
             }
 
-            Result<Page> pageRes = await _pagesRepository.GetPageByIdAsync(id);
+            Result<Page> pageRes = await _pagesRepository.GetByIdAsync(id);
             if (!pageRes.Success || pageRes.Content == null)
             {
                 return new Result<None>(false, null, pageRes.Message);

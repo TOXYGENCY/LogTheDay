@@ -5,6 +5,7 @@ using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
 using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 using LogTheDay.LogTheDay.WebAPI.Infrastructure;
 using LogTheDay.LogTheDay.WebAPI.Services;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace LogTheDay.LogTheDay.WebAPI.Controllers
 {
@@ -26,7 +27,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNewPageAsync(Page page)
         {
-            Result<None> creationRes = await _pagesRepository.AddPageAsync(page);
+            Result<None> creationRes = await _pagesRepository.AddAsync(page);
             if (creationRes.Success)
             {
                 return Ok();
@@ -40,7 +41,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         [HttpPost("{id}/infoChange")]
         public async Task<IActionResult> ChangeInfoAsync(Guid id, string newTitle, string newDescription)
         {
-            Result<Page> pageRes = await _pagesRepository.GetPageByIdAsync(id);
+            Result<Page> pageRes = await _pagesRepository.GetByIdAsync(id);
             if (pageRes.Success) if (pageRes.Content == null) return BadRequest($"Нет {nameof(Page)} с ID: {id}");
 
             Result<None> infoChangeRes = await _pagesRepository.ChangeInfoAsync(pageRes.Content, newTitle, newDescription);
@@ -69,9 +70,9 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPageByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            Result<Page> pageRes = await _pagesRepository.GetPageByIdAsync(id);
+            Result<Page> pageRes = await _pagesRepository.GetByIdAsync(id);
             if (pageRes.Success)
             {
                 if (pageRes.Content == null) return BadRequest($"Нет {nameof(Page)} с ID: {id}");
@@ -84,9 +85,9 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePageAsync(Guid id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            Result<None> deletionRes = await _pagesRepository.DeletePageAsync(id); ;
+            Result<None> deletionRes = await _pagesRepository.DeleteAsync(id); ;
             if (deletionRes.Success)
             {
                 return Ok(deletionRes.Message);
@@ -100,7 +101,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> ReplacePageAsync(Page page)
         {
-            Result<None> replacementRes = await _pagesRepository.ReplacePageAsync(page);
+            Result<None> replacementRes = await _pagesRepository.ReplaceAsync(page);
             if (replacementRes.Success)
             {
                 return Ok(replacementRes.Message);
@@ -109,6 +110,17 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, replacementRes.Message);
             }
+        }
+
+        [HttpGet("odata")]
+        [EnableQuery]
+        public IQueryable<Page> GetByODataQuery()
+        {
+            var odataRes = _pagesRepository.GetByODataQuery();
+            if (odataRes.Success)
+                return odataRes.Content;
+            else
+                return null;
         }
     }
 }

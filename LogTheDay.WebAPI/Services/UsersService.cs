@@ -61,7 +61,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Services
                 logger.LogWarning(message);
                 return new Result<bool>(false, false, message);
             }
-            Result<IEnumerable<User>> requestedAccountArrRes = await _usersRepository.GetUsersByQueryAsync(email: email);
+            Result<IEnumerable<User>> requestedAccountArrRes = await _usersRepository.GetByQueryAsync(email: email);
             if (!requestedAccountArrRes.Success || requestedAccountArrRes.Content == null)
             {
                 return new Result<bool>(false, false, requestedAccountArrRes.Message);
@@ -81,7 +81,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Services
                 return new Result<None>(false, null, message);
             }
 
-            Result<User> userRes = await _usersRepository.GetUserByIdAsync(id);
+            Result<User> userRes = await _usersRepository.GetByIdAsync(id);
             if (!userRes.Success || userRes.Content == null)
             {
                 return new Result<None>(false, null, userRes.Message);
@@ -127,7 +127,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Services
                 //LastLoginDate = DateOnly
                 // Pages будет автоматически инициализировано пустым списком
             };
-            Result<None> registrationRes = await _usersRepository.AddUserAsync(newUser);
+            Result<None> registrationRes = await _usersRepository.AddAsync(newUser);
             if (!(registrationRes).Success) return registrationRes;
 
             return new Result<None>(true, null, $"Пользователь с E-mail \"{email}\" зарегистрирован.");
@@ -146,7 +146,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Services
 
         protected async Task<Result<bool>> _UserExistsWithEmailAsync(string email)
         {
-            Result<IEnumerable<User>> potentialUserRes = await _usersRepository.GetUsersByQueryAsync(email: email);
+            Result<IEnumerable<User>> potentialUserRes = await _usersRepository.GetByQueryAsync(email: email);
             if (!potentialUserRes.Success || potentialUserRes.Content == null)
             {
                 return new Result<bool>(false, false, potentialUserRes.Message);

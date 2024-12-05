@@ -1,20 +1,13 @@
-﻿using Castle.Components.DictionaryAdapter.Xml;
-using LogTheDay.LogTheDay.WebAPI.Controllers;
-using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+﻿using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
 using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Npgsql.TypeMapping;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Xml.Linq;
 
 namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
 {
-    // Базовые действия над {nameof(User)}ми в отношении базы данных
+    // Базовые действия над Userами в отношении базы данных
     public class UsersRepository : IUsersRepository
     {
-        LogTheDayContext context;
+        public LogTheDayContext context;
         ILogger<UsersRepository> logger;
         public UsersRepository(LogTheDayContext context, ILogger<UsersRepository> logger)
         {
@@ -22,7 +15,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<Result<None>> AddUserAsync(User user)
+        public async Task<Result<None>> AddAsync(User user)
         {
             if (user == null)
             {
@@ -44,7 +37,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             return new Result<None>(true, null, $"{nameof(User)} добавлен.");
         }
 
-        public async Task<Result<User>> GetUserByIdAsync(Guid id)
+        public async Task<Result<User>> GetByIdAsync(Guid id)
         {
             User? user;
             try
@@ -74,8 +67,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             return new Result<IEnumerable<User>>(true, users, $"{nameof(User)}s получены.");
         }
 
-        // TODO: сделать через OData и добавить другие параметры
-        public async Task<Result<IEnumerable<User>>> GetUsersByQueryAsync(string name = null, string email = null, DateOnly? regDate = null)
+        public async Task<Result<IEnumerable<User>>> GetByQueryAsync(string name = null, string email = null, DateOnly? regDate = null)
         {
             // Проверка на null в переданных агрументах
             if (string.IsNullOrWhiteSpace(name) &&
@@ -106,7 +98,8 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             return new Result<IEnumerable<User>>(true, await query.ToListAsync(), "Поиск выполнен.");
         }
 
-        public async Task<Result<None>> ReplaceUserAsync(User replacementUser)
+        //TODO: оптимизировать замену?
+        public async Task<Result<None>> ReplaceAsync(User replacementUser)
         {
             if (replacementUser == null)
             {
@@ -121,7 +114,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
                 try
                 {
                     Result<User> currentUserRes;
-                    currentUserRes = await this.GetUserByIdAsync(replacementUser.Id);
+                    currentUserRes = await this.GetByIdAsync(replacementUser.Id);
                     if (!currentUserRes.Success || currentUserRes.Content == null)
                         return new Result<None>(false, null, $"Нет {nameof(User)} с id = {replacementUser.Id}");
                     
@@ -168,9 +161,9 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             }
             return new Result<None>(true, null, $"Имя {nameof(User)} заменено на {name}");
         }
-        public async Task<Result<None>> DeleteUserAsync(Guid id)
+        public async Task<Result<None>> DeleteAsync(Guid id)
         {
-            Result<User> userRes = await this.GetUserByIdAsync(id);
+            Result<User> userRes = await this.GetByIdAsync(id);
             if (!userRes.Success) return new Result<None>(false, null, userRes.Message);
 
             User? user = userRes.Content;
@@ -211,6 +204,21 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
                 return new Result<None>(false, null, $"Ошибка при обновлении даты входа. {ex.Message}");
             }
             return new Result<None>(true, null, $"Дата последнего входа обновлена на {user.LastLoginDate}");
+        }
+
+        public Result<IQueryable<User>> GetByODataQuery()
+        {
+            IQueryable<User> users;
+            try
+            {
+                users = context.Users;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Ошибка при получении {nameof(User)}s из контекста.");
+                return new Result<IQueryable<User>>(false, null, $"Ошибка при получении {nameof(User)}s из контекста. {ex.Message}");
+            }
+            return new Result<IQueryable<User>>(true, users, $"Данные выбранных {nameof(User)}s отправлены.");
         }
     }
 }

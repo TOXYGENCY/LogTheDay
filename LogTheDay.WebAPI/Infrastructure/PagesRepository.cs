@@ -15,7 +15,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             this.context = context ?? throw new ArgumentNullException(nameof(context));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        public async Task<Result<None>> AddPageAsync(Page page)
+        public async Task<Result<None>> AddAsync(Page page)
         {
             if (page == null)
             {
@@ -52,7 +52,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             return new Result<IEnumerable<Page>>(true, pages, $"{nameof(Page)}s получены.");
         }
 
-        public async Task<Result<Page>> GetPageByIdAsync(Guid id)
+        public async Task<Result<Page>> GetByIdAsync(Guid id)
         {
             Page? page;
             try
@@ -68,7 +68,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
         }
 
         // TODO: не работает, сделать общий метод перебора всех полей
-        public async Task<Result<None>> ReplacePageAsync(Page replacementPage)
+        public async Task<Result<None>> ReplaceAsync(Page replacementPage)
         {
             if (replacementPage == null)
             {
@@ -83,7 +83,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
                 try
                 {
                     Result<Page> currentPageRes;
-                    currentPageRes = await this.GetPageByIdAsync(replacementPage.Id);
+                    currentPageRes = await this.GetByIdAsync(replacementPage.Id);
                     if (!currentPageRes.Success || currentPageRes.Content == null)
                         return new Result<None>(false, null, $"Нет {nameof(Page)} с id = {replacementPage.Id}");
 
@@ -112,9 +112,9 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             }
         }
 
-        public async Task<Result<None>> DeletePageAsync(Guid id)
+        public async Task<Result<None>> DeleteAsync(Guid id)
         {
-            Result<Page> pageRes = await this.GetPageByIdAsync(id);
+            Result<Page> pageRes = await this.GetByIdAsync(id);
             if (!pageRes.Success) return new Result<None>(false, null, pageRes.Message);
 
             Page? page = pageRes.Content;
@@ -220,6 +220,21 @@ namespace LogTheDay.LogTheDay.WebAPI.Infrastructure
             }
 
             return new Result<None>(true, null, $"{nameof(note)} удален из {nameof(Page)}.");
+        }
+
+        public Result<IQueryable<Page>> GetByODataQuery()
+        {
+            IQueryable<Page> pages;
+            try
+            {
+                pages = context.Pages;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Ошибка при получении {nameof(Page)}s из контекста.");
+                return new Result<IQueryable<Page>>(false, null, $"Ошибка при получении {nameof(Page)}s из контекста. {ex.Message}");
+            }
+            return new Result<IQueryable<Page>>(true, pages, $"Данные выбранных {nameof(Page)}s отправлены.");
         }
     }
 }

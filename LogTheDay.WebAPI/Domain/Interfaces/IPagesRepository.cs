@@ -4,14 +4,9 @@ namespace LogTheDay.LogTheDay.WebAPI.Domain.Interfaces
 {
     // Базовые действия над пользователями в отношении базы данных
 
-    public interface IPagesRepository
+    public interface IPagesRepository : IRepository<Page>
     {
-        Task<Result<None>> AddPageAsync(Page page);
-        Task<Result<Page>> GetPageByIdAsync(Guid id);
-        Task<Result<IEnumerable<Page>>> GetAllAsync();
         //Task<Result<IEnumerable<Page>>> GetPagesByQueryAsync(string query);
-        Task<Result<None>> ReplacePageAsync(Page replacementPage);
-        Task<Result<None>> DeletePageAsync(Guid id);
         Task<Result<None>> UpdateLastModDate(Page page);
         Task<Result<None>> ChangeInfoAsync(Page page, string newTitle, string newDescription);
         Task<Result<None>> AddNoteAsync(Page page, Note note);
