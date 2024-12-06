@@ -1,4 +1,5 @@
 ﻿using LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+using LogTheDay.LogTheDay.WebAPI.Domain.Entities.ControllerParameters;
 using LogTheDay.LogTheDay.WebAPI.Domain.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -23,24 +24,26 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
             //this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        // TODO: уточнить статус коды 
         [HttpPost("auth")]
-        public async Task<IActionResult> AuthenticateAsync(string email, string passwordString)
+        public async Task<IActionResult> AuthenticateAsync([FromBody] AuthCredentials credentials)
         {
-            Result<bool> authRes = await usersService.AuthenticateAsync(email, passwordString);
+            Result<bool> authRes = await usersService.AuthenticateAsync(credentials.Email, credentials.PasswordString);
             if (authRes.Success)
             {
                 return Ok(authRes.Content);
             }
             else
             {
+                // TODO: уточнить статус коды (400 если пользователя нет)
                 return StatusCode(StatusCodes.Status500InternalServerError, authRes.Message);
             }
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterNewUserAsync(string name, string email, string passwordString)
+        public async Task<IActionResult> RegisterNewUserAsync([FromBody] RegCredentials credentials)
         {
-            Result<None> registrationRes = await usersService.RegisterNewUserAsync(name, email.ToLower(), passwordString);
+            Result<None> registrationRes = await usersService.RegisterNewUserAsync(credentials.Name, credentials.Email.ToLower(), credentials.PasswordString);
             if (registrationRes.Success)
             {
                 return Ok();
@@ -52,7 +55,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         }
 
         [HttpPost("{id}/nameChange")]
-        public async Task<IActionResult> ChangeNameAsync(Guid id, string newName)
+        public async Task<IActionResult> ChangeNameAsync(Guid id, [FromBody] string newName)
         {
             Result<None> nameChangeRes = await usersService.ChangeNameAsync(id, newName);
             if (nameChangeRes.Success)
@@ -109,7 +112,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> ReplaceAsync(User user)
+        public async Task<IActionResult> ReplaceAsync([FromBody] User user)
         {
             Result<None> replacementRes = await _usersRepository.ReplaceAsync(user);
             if (replacementRes.Success)

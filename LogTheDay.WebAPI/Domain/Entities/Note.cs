@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace LogTheDay.LogTheDay.WebAPI.Domain.Entities;
+﻿namespace LogTheDay.LogTheDay.WebAPI.Domain.Entities;
 
 public partial class Note
 {

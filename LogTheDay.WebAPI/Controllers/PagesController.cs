@@ -25,7 +25,7 @@ namespace LogTheDay.LogTheDay.WebAPI.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateNewPageAsync(Page page)
+        public async Task<IActionResult> AddPageAsync(Page page)
         {
             Result<None> creationRes = await _pagesRepository.AddAsync(page);
             if (creationRes.Success)
